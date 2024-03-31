@@ -1,0 +1,56 @@
+import tkinter as tk
+import speech_recognition as sr
+#Here i use tkinter python lib for this problem. Here's the detailed code with useful comments. Try to run this code in separate window in jupiter. 
+def evaluate_math_expression():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening for math query...")
+        audio = recognizer.listen(source)
+
+    try:
+        query = recognizer.recognize_google(audio)
+        result = eval_math_query(query)
+        result_label.config(text=f"Result: {result}")
+    except sr.UnknownValueError:
+        print("Sorry, could not understand audio.")
+    except sr.RequestError as e:
+        print(f"Could not request results; {e}")
+    except Exception as e:
+        print(f"Error evaluating expression: {e}")
+#Queries-------------------------------------------------
+def eval_math_query(query):
+    # Split the query into numbers and operator
+    tokens = query.split()
+    num1 = int(tokens[0])
+    operator = tokens[1]
+    num2 = int(tokens[2])
+
+    # Perform the operation
+    if operator == '+':
+        return num1 + num2
+    elif operator == '-':
+        return num1 - num2
+    elif operator == '*':
+        return num1 * num2
+    elif operator == '/':
+        if num2 != 0:
+            return num1 / num2
+        else:
+            return "Error: Division by zero"
+    else:
+        return "Error: Invalid operator"
+#Now the code for UI---------------------------------------
+# Create main window
+root = tk.Tk()
+root.title("Math Query Evaluator")
+
+# Create result label
+result_label = tk.Label(root, text="Result: ")
+result_label.pack(pady=10)
+
+# Create evaluate buttons
+evaluate_button = tk.Button(root, text="Evaluate Math Query", command=evaluate_math_expression)
+evaluate_button.pack(pady=5)
+
+# Start GUI
+root.mainloop()
